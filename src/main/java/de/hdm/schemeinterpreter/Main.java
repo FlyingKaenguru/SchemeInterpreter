@@ -1,31 +1,19 @@
 package de.hdm.schemeinterpreter;
 
-import de.hdm.schemeinterpreter.symbols.*;
-
+import de.hdm.schemeinterpreter.symbols.Symbol;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Main {
-    static List<Symbol> symbols = new ArrayList<>();
+    static SymbolManager symbolManager = SymbolManager.getInstance();
 
     public static void main(String[] args) throws Exception {
-        symbols.addAll(Arrays.asList(new Addition(), new Subtraction(), new Multiplication(), new Display(), new Division(),
-                new Define((key, value) -> {
-                    // TODO: Check for duplicates
-                    symbols.add(new Symbol() {
-                        @Override
-                        public String getSymbol() {
-                            return key;
-                        }
-
-                        @Override
-                        public String eval(String... params) {
-                            return value;
-                        }
-                    });
-                })
-        ));
+        symbolManager.addSymbols(Arrays.stream(ClassFinder.getImplementations(Symbol.class, "de.hdm.schemeinterpreter.symbols"))
+                .map(ClassFinder::getClassInstance)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList()));
 
         readEvalPrintLoop();
     }
@@ -112,7 +100,7 @@ public class Main {
     }
 
     private static String parseSchemeFunction(SchemeFunction function) {
-        Optional<Symbol> symbol = symbols.stream().filter(f -> f.getSymbol().equals(function.symbol)).findFirst();
+        Optional<Symbol> symbol = symbolManager.getSymbol(function.symbol);
         if (symbol.isPresent()) {
             return symbol.get().eval(function.params);
         } else {
@@ -130,6 +118,7 @@ public class Main {
             String[] params = m.group(2).trim().split(" ");
 
             for (int i = 0; i < params.length; i++) {
+                //TODO !!! Hier bin ich dran !!! Auslagern!!! Macht Set kaputt und noch viel viel mehr :-(
                 params[i] = resolveVar(params[i]);
             }
 
@@ -140,7 +129,7 @@ public class Main {
     }
 
     private static String resolveVar(String param) {
-        Optional<Symbol> symbol = symbols.stream().filter(f -> f.getSymbol().equals(param)).findFirst();
+        Optional<Symbol> symbol = symbolManager.getSymbol(param);
         if (symbol.isPresent()) {
             return symbol.get().eval(param);
         }

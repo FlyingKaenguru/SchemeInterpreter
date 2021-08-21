@@ -5,16 +5,19 @@ import java.util.Arrays;
 public class Lower implements Symbol {
     @Override
     public String getSymbol() {
-        return "*";
+        return "<";
     }
 
     @Override
     public String eval(String... params) throws RuntimeException {
-        double[] numbers =  Arrays.stream(params).mapToDouble(Double::valueOf).toArray();
-        double result = numbers[0];
+        double[] numbers = Arrays.stream(params).mapToDouble(Double::valueOf).toArray();
+
         for (int i = 1; i < numbers.length; i++) {
-            result -= numbers[i];
+            if (numbers[i - 1] >= numbers[i]) {
+                return "#f";
+            }
         }
-        return String.valueOf(result);
+
+        return "#t";
     }
 }

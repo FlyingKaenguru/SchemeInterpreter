@@ -2,10 +2,10 @@ package de.hdm.schemeinterpreter.symbols;
 
 import java.util.Arrays;
 
-public class Greater implements Symbol {
+public class GreaterEquals implements Symbol {
     @Override
     public String getSymbol() {
-        return ">";
+        return ">=";
     }
 
     @Override
@@ -13,7 +13,7 @@ public class Greater implements Symbol {
         double[] numbers = Arrays.stream(params).mapToDouble(Double::valueOf).toArray();
 
         for (int i = 1; i < numbers.length; i++) {
-            if (numbers[i - 1] <= numbers[i]) {
+            if (numbers[i - 1] < numbers[i]) {
                 return "#f";
             }
         }
