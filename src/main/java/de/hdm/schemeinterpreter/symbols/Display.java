@@ -8,9 +8,6 @@ import java.util.Arrays;
 
 public class Display implements Symbol {
 
-    public Display() {
-    }
-
     @Override
     public String getSymbol() {
         return "display";

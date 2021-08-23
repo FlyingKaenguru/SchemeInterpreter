@@ -21,4 +21,8 @@ public class Validator {
         return Pattern.compile(enclosed((Type.schemeVar))).matcher(s).matches();
     }
 
+    public static boolean isInternalVar(String s) {
+        return Pattern.compile(enclosed("\\$_[a-f-0-9-]+")).matcher(s).matches();
+    }
+
 }

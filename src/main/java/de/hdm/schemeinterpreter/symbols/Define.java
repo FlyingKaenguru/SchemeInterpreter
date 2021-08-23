@@ -1,5 +1,6 @@
 package de.hdm.schemeinterpreter.symbols;
 
+import de.hdm.schemeinterpreter.SymbolFactory;
 import de.hdm.schemeinterpreter.SymbolManager;
 import de.hdm.schemeinterpreter.ValidationResult;
 import de.hdm.schemeinterpreter.Validator;
@@ -27,9 +28,7 @@ public class Define implements Symbol {
 
     @Override
     public String eval(String... validatedParams) {
-        final String value = validatedParams[1];
-
-        SymbolManager.getInstance().addSymbol(SymbolManager.getInstance().createSymbol(validatedParams[0], validatedParams[1]));
+        SymbolManager.getInstance().addSymbol(SymbolFactory.createVariable(validatedParams[0], validatedParams[1]));
         return "";
     }
 }

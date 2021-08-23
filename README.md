@@ -25,9 +25,9 @@
 -     >
 - !=
 - ~=
-- cons
-- car
-- cdr
+- cons => The cons function accepts any two values, not just a list for the second argument. The two values joined with cons are printed between parentheses, with a dot, because Lisp interpreters uses a . to visually separate the elements in the pair.
+- car  => first item 
+- cdr  => second and all subsequent items in list
 
 **Eine Funktion besteht aus: ( symbol [] [] )
 Funktionen können Innere-Funktionen haben: (symbol ( symbol [] []) [])** 
