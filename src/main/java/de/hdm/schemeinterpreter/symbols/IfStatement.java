@@ -16,12 +16,9 @@ public class IfStatement implements Symbol {
 
     @Override
     public String eval(String... validatedParams) {
-        for (String param : validatedParams) {
-            if (!param.equals(SchemeType.TRUE)) {
-                return SchemeType.FALSE;
+            if (validatedParams[0].equals(SchemeType.TRUE)) {
+                return validatedParams[1];
             }
-        }
-
-        return SchemeType.TRUE;
+            return validatedParams[2];
     }
 }

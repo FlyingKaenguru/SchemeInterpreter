@@ -23,7 +23,7 @@ public class ParamUtils {
     }
 
     public static ValidationResult<String[]> validateParams(String pattern, String[] params) {
-        final String paramString = prepareRegexableParamString(params);
+        final String paramString = prepareForValidityCheck(params);
         ValidationResult.Status status =
                 null == pattern && null == params || Pattern.compile(pattern).matcher(paramString).matches()
                         ? ValidationResult.Status.VALID
@@ -32,7 +32,7 @@ public class ParamUtils {
         return new ValidationResult<>(params, status, "");
     }
 
-    public static String prepareRegexableParamString(String[] params) {
+    public static String prepareForValidityCheck(String[] params) {
         return String.join(" ", params) + " ";
     }
 
