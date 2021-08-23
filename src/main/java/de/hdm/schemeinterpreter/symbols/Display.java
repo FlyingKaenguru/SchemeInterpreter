@@ -1,6 +1,7 @@
 package de.hdm.schemeinterpreter.symbols;
 
 import de.hdm.schemeinterpreter.SymbolManager;
+import de.hdm.schemeinterpreter.utils.ParamUtils;
 
 import java.util.Arrays;
 
@@ -21,6 +22,7 @@ public class Display implements Symbol {
 
     @Override
     public String eval(String... validatedParams) {
-        return String.join(" ", Arrays.stream(validatedParams).map(e -> SymbolManager.getInstance().resolveVar(e)).toArray(String[]::new));
+        return String.join(" ", Arrays.stream(validatedParams)
+                .map(e -> ParamUtils.unwrapString(SymbolManager.getInstance().resolveVar(e))).toArray(String[]::new));
     }
 }

@@ -2,8 +2,10 @@ package de.hdm.schemeinterpreter.utils;
 
 import de.hdm.schemeinterpreter.SymbolManager;
 import de.hdm.schemeinterpreter.ValidationResult;
+import de.hdm.schemeinterpreter.Validator;
 
 import java.util.Arrays;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ParamUtils {
@@ -15,9 +17,7 @@ public class ParamUtils {
     public static String[] resolveParams(String[] params, int... indexes) {
         final String[] resolvedParams = Arrays.copyOf(params, params.length);
 
-        Arrays.stream(indexes).forEach(i -> {
-            resolvedParams[i] = SymbolManager.getInstance().resolveVar(params[i]);
-        });
+        Arrays.stream(indexes).forEach(i -> resolvedParams[i] = SymbolManager.getInstance().resolveVar(params[i]));
 
         return resolvedParams;
     }
@@ -36,4 +36,24 @@ public class ParamUtils {
         return String.join(" ", params) + " ";
     }
 
+    /**
+     * eg. "Hello \"World\"" --> Hello "World"
+     * eg. 'Hello \'you\'' --> Hello 'you'
+     *
+     * @param s
+     * @return
+     */
+    public static String unwrapString(String s) {
+        final Matcher m = Pattern.compile(Validator.Type.string).matcher(s);
+
+        if (!m.find()) {
+            return s;
+        }
+
+        if (null != m.group(1)) {
+            return m.group(1).replace("\\\"", "\"");
+        } else {
+            return m.group(2).replace("\\'", "'");
+        }
+    }
 }
