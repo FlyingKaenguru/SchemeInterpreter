@@ -29,31 +29,7 @@ public class Define implements Symbol {
     public String eval(String... validatedParams) {
         final String value = validatedParams[1];
 
-        SymbolManager.getInstance().addSymbol(new Symbol() {
-            @Override
-            public String getSymbol() {
-                return validatedParams[0];
-            }
-
-            @Override
-            public ValidationResult<String[]> validateParams(String[] params) {
-                final ValidationResult.Status status = params.length == 0
-                        ? ValidationResult.Status.VALID
-                        : ValidationResult.Status.INVALID;
-
-                return new ValidationResult<>(params, status, "");
-            }
-
-            @Override
-            public String getParamDefinition() {
-                return null;
-            }
-
-            @Override
-            public String eval(String... validatedParams) {
-                return value;
-            }
-        });
+        SymbolManager.getInstance().addSymbol(SymbolManager.getInstance().createSymbol(validatedParams[0], validatedParams[1]));
         return "";
     }
 }
