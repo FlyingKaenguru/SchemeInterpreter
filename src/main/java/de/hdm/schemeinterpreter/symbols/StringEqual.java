@@ -11,7 +11,7 @@ public class StringEqual implements Symbol {
 
     @Override
     public String getParamDefinition() {
-        return "(?:(?:" + Validator.Type.string + ")|(?:" + SchemeType.NULL + ") ){2,}";
+        return Validator.enclosed("(?:(?:" + Validator.Type.string + ")|(?:" + SchemeType.NULL + ") ){2,}");
     }
 
     @Override

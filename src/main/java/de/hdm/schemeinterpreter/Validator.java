@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 public class Validator {
 
     public static class Type {
+        public static final String any = "[^\s]+";
         public static final String bool = "#f|t";
         public static final String floatingPoint = "-?[0-9]+?(?:.[0-9]+)?(?:e\\^-?[0-9]+)?";
         public static final String function = "\\(\s*([^\s]+)((?:\s*[^\s]+)+)\s*\\)";

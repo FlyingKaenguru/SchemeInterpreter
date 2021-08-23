@@ -1,6 +1,7 @@
 package de.hdm.schemeinterpreter.symbols;
 
 import de.hdm.schemeinterpreter.SymbolManager;
+import de.hdm.schemeinterpreter.Validator;
 import de.hdm.schemeinterpreter.utils.ParamUtils;
 
 import java.util.Arrays;
@@ -17,7 +18,7 @@ public class Display implements Symbol {
 
     @Override
     public String getParamDefinition() {
-        return "^(?:[^\s]+ )+$";
+        return Validator.enclosed("(?:" + Validator.Type.any + " )+");
     }
 
     @Override

@@ -15,7 +15,7 @@ public class Define implements Symbol {
     @Override
     public String getParamDefinition() {
         // TODO: Define second argument more properly.
-        return "^" + Validator.Type.schemeVar + " (?:[^\s]+ )+$";
+        return Validator.enclosed(Validator.Type.schemeVar + " (?:[^\s]+ )+");
     }
 
     @Override

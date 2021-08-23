@@ -11,7 +11,7 @@ public class IfStatement implements Symbol {
 
     @Override
     public String getParamDefinition() {
-        return "^(?:" + Validator.Type.bool + " )+$";
+        return Validator.enclosed(Validator.Type.bool + " (?:" + Validator.Type.any + " ){2}");
     }
 
     @Override

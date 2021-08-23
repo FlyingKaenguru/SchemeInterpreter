@@ -13,7 +13,7 @@ public class Greater implements Symbol {
 
     @Override
     public String getParamDefinition() {
-        return "^(?:" + Validator.Type.floatingPoint + " ){2,}$";
+        return Validator.enclosed("(?:" + Validator.Type.floatingPoint + " ){2,}");
     }
 
     @Override
