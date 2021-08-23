@@ -1,5 +1,8 @@
 package de.hdm.schemeinterpreter.symbols;
 
+import de.hdm.schemeinterpreter.SchemeType;
+import de.hdm.schemeinterpreter.Validator;
+
 import java.util.Arrays;
 
 public class Greater implements Symbol {
@@ -9,8 +12,13 @@ public class Greater implements Symbol {
     }
 
     @Override
-    public String eval(String... params) throws RuntimeException {
-        double[] numbers = Arrays.stream(params).mapToDouble(Double::valueOf).toArray();
+    public String getParamDefinition() {
+        return "^(?:" + Validator.Type.floatingPoint + " ){2,}$";
+    }
+
+    @Override
+    public String eval(String... validatedParams) throws RuntimeException {
+        double[] numbers = Arrays.stream(validatedParams).mapToDouble(Double::valueOf).toArray();
 
         for (int i = 1; i < numbers.length; i++) {
             if (numbers[i - 1] <= numbers[i]) {
@@ -18,6 +26,6 @@ public class Greater implements Symbol {
             }
         }
 
-        return "#t";
+        return SchemeType.TRUE;
     }
 }

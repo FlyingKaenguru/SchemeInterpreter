@@ -39,7 +39,12 @@ public class SymbolManager {
                 }
 
                 @Override
-                public String eval(String... params) {
+                public String getParamDefinition() {
+                    return null;
+                }
+
+                @Override
+                public String eval(String... validatedParams) {
                     return newValue;
                 }
             });
@@ -54,5 +59,20 @@ public class SymbolManager {
 
     public void addSymbols(List<? extends Symbol> symbols) {
         this.symbols.addAll(symbols);
+    }
+
+    public String resolveVar(String param) {
+        if (!Validator.isSchemeVar(param)) {
+            return param;
+        }
+
+        Optional<Symbol> symbol = getSymbol(param);
+
+        if (symbol.isPresent()) {
+            return symbol.get().eval(param);
+        } else {
+            // TODO: Maybe handle more gracefully to keep the program running.
+            throw new NullPointerException("Variable '" + param + "' is undefined.");
+        }
     }
 }

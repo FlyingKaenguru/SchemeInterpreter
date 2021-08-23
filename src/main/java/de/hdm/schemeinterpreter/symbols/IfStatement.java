@@ -1,5 +1,8 @@
 package de.hdm.schemeinterpreter.symbols;
 
+import de.hdm.schemeinterpreter.SchemeType;
+import de.hdm.schemeinterpreter.Validator;
+
 public class IfStatement implements Symbol {
     @Override
     public String getSymbol() {
@@ -7,13 +10,18 @@ public class IfStatement implements Symbol {
     }
 
     @Override
-    public String eval(String... params) {
-        for (String param : params) {
-            if (!param.equals("#t")) {
-                return "#f";
+    public String getParamDefinition() {
+        return "^(?:" + Validator.Type.bool + " )+$";
+    }
+
+    @Override
+    public String eval(String... validatedParams) {
+        for (String param : validatedParams) {
+            if (!param.equals(SchemeType.TRUE)) {
+                return SchemeType.FALSE;
             }
         }
 
-        return "#t";
+        return SchemeType.TRUE;
     }
 }

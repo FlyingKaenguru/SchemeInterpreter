@@ -1,8 +1,12 @@
 package de.hdm.schemeinterpreter.symbols;
 
-public class Display implements Symbol{
+import de.hdm.schemeinterpreter.SymbolManager;
 
-    public Display(){
+import java.util.Arrays;
+
+public class Display implements Symbol {
+
+    public Display() {
     }
 
     @Override
@@ -11,7 +15,12 @@ public class Display implements Symbol{
     }
 
     @Override
-    public String eval(String... params) {
-        return String.join(" ", params);
+    public String getParamDefinition() {
+        return "^(?:[^\s]+ )+$";
+    }
+
+    @Override
+    public String eval(String... validatedParams) {
+        return String.join(" ", Arrays.stream(validatedParams).map(e -> SymbolManager.getInstance().resolveVar(e)).toArray(String[]::new));
     }
 }
