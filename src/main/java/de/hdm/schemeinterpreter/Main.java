@@ -166,6 +166,6 @@ public class Main {
             throw new IllegalArgumentException(validationResult.message);
         }
 
-        return symbol.eval(params);
+        return symbol.eval(validationResult.validationSubject);
     }
 }
