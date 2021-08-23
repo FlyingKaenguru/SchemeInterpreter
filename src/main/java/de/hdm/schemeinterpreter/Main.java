@@ -28,15 +28,12 @@ public class Main {
             System.out.print("> ");
             input = console.nextLine().trim();
 
-            if (input.charAt(0) == '"' && input.charAt(input.length() - 1) == '"') {
-                continue;
-            }
-
             if (!isBracingValid(input)) {
                 System.out.println("Syntax error number of closing braces do not match number of opening braces.");
                 continue;
             }
 
+            //Input --> Result
             System.out.println(parseInputString(input));
         } while (!input.equals("exit"));
     }
@@ -65,13 +62,18 @@ public class Main {
             if (value == null) {
                 return "NOT VALID";
             } else {
-                //TODO: return maybe null
                 s = s.replace(function.original, value);
             }
         } while (Pattern.compile(Validator.Type.function).matcher(s).find());
         return s;
     }
 
+    /**
+     * Search inner function
+     * eg (+ (+ 6 7) 9) --> (+ 6 7)
+     * @param
+     * @return
+     */
     private static String findSchemeFunction(String s) {
         int openBraceIndex = -1;
 
@@ -95,6 +97,11 @@ public class Main {
         return i + 1 < s.length() && s.charAt(i + 1) == ')';
     }
 
+    /**
+     * Checks if symbol is implements, calls executionSchemeFunction
+     * @param function SchemeFunction
+     * @return eval result
+     */
     private static String parseSchemeFunction(SchemeFunction function) {
         Optional<Symbol> symbol = symbolManager.getSymbol(function.symbol);
         if (symbol.isPresent()) {
@@ -105,9 +112,11 @@ public class Main {
         }
     }
 
+
     private static SchemeFunction stringToSchemeFunction(String s) {
         final String[] groups = extractSchemeFunctionParts(s);
 
+        //(+ 7 8) --> [(+ 7 8), + , 7 8]
         if (groups.length == 3) {
             final String[] params = extractParams(groups[2].trim());
 
@@ -117,6 +126,12 @@ public class Main {
         return null;
     }
 
+    /**
+     * Returns groups
+     * eg. groups (+ 7 8) --> [(+ 7 8), + , 7 8]
+     * @param s
+     * @return String Array with found match groups
+     */
     private static String[] extractSchemeFunctionParts(String s) {
         final Matcher m = Pattern.compile(Validator.Type.function).matcher(s);
 
@@ -127,6 +142,12 @@ public class Main {
         return new String[]{};
     }
 
+    /**
+     * Returns matches and removes all whitespaces outside ""
+     * eg. "7 "Hello    World"       9"  -> [7, "Hello    World", 9]
+     * @param s
+     * @return String Array
+     */
     private static String[] extractParams(String s) {
         final Matcher m = Pattern.compile(Validator.Type.string + "|[^\s]+").matcher(s);
         final List<String> matches = new ArrayList<>();
