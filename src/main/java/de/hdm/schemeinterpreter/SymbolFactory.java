@@ -46,8 +46,7 @@ public class SymbolFactory {
 
             @Override
             public String eval(String... validatedParams) {
-                return symbol;
-                //return String.join("", value);
+                return "(" + String.join(" . ", value) + ")";
             }
         };
     }

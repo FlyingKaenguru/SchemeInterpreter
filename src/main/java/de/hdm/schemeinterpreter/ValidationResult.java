@@ -6,7 +6,7 @@ public class ValidationResult<T> {
         INVALID
     }
 
-    public final T validationSubject;
+    public T validationSubject;
     public final Status status;
     public final String message;
 
