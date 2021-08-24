@@ -44,7 +44,7 @@ public class ParamUtils {
      * @return
      */
     public static String unwrapString(String s) {
-        final Matcher m = Pattern.compile(Validator.Type.string).matcher(s);
+        final Matcher m = Pattern.compile(Validator.enclosed(Validator.Type.string)).matcher(s);
 
         if (!m.find()) {
             return s;

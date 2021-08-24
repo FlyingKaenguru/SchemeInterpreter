@@ -1,7 +1,6 @@
 package de.hdm.schemeinterpreter;
 
 import de.hdm.schemeinterpreter.symbols.Symbol;
-
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,23 +53,30 @@ public class Main {
 
     public static String parseInputString(String s) {
         do {
+            System.out.println("GOING TO PARSE: " + s);
+            if (!Validator.containsSchemeFunction(s)) {
+                break;
+            }
+
             final String schemeFunction = findSchemeFunction(s);
 
             SchemeFunction function = stringToSchemeFunction(schemeFunction);
             String value = parseSchemeFunction(function);
 
-            if (value == null) {
+            if (null == value) {
                 return "NOT VALID";
             } else {
                 s = s.replace(function.original, value);
             }
-        } while (Pattern.compile(Validator.Type.function).matcher(s).find());
+        } while (Validator.isSchemeFunction(s));
+
         return s;
     }
 
     /**
      * Search inner function
      * eg (+ (+ 6 7) 9) --> (+ 6 7)
+     *
      * @param
      * @return
      */
@@ -99,6 +105,7 @@ public class Main {
 
     /**
      * Checks if symbol is implements, calls executionSchemeFunction
+     *
      * @param function SchemeFunction
      * @return eval result
      */
@@ -117,7 +124,7 @@ public class Main {
         final String[] groups = extractSchemeFunctionParts(s);
 
         //(+ 7 8) --> [(+ 7 8), + , 7 8]
-        if (groups.length == 3) {
+        if (groups.length == 3 && Validator.isSchemeFunction(s)) {
             final String[] params = extractParams(groups[2].trim());
 
             return new SchemeFunction(groups[0], groups[1], params);
@@ -129,6 +136,7 @@ public class Main {
     /**
      * Returns groups
      * eg. groups (+ 7 8) --> [(+ 7 8), + , 7 8]
+     *
      * @param s
      * @return String Array with found match groups
      */
@@ -145,6 +153,7 @@ public class Main {
     /**
      * Returns matches and removes all whitespaces outside ""
      * eg. "7 "Hello    World"       9"  -> [7, "Hello    World", 9]
+     *
      * @param s
      * @return String Array
      */
@@ -152,7 +161,7 @@ public class Main {
         final Matcher m = Pattern.compile(Validator.Type.string + "|[^\s]+").matcher(s);
         final List<String> matches = new ArrayList<>();
 
-        while(m.find()) {
+        while (m.find()) {
             matches.add(m.group());
         }
 
