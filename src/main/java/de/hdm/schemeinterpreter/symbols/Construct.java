@@ -31,11 +31,12 @@ public class Construct implements Symbol {
      * (define b (cons 3 a))     -->    3 $_        -->     (3 1 . 2)
      * (define c (cons b 4))     -->    $_ 4        -->     ((3 1 . 2) . 4)
      * (define d (cons b c))     -->    $_ $_       -->     ((3 1 . 2) (3 1 . 2) . 4)
+     * (define a (cons 1 2))(define b (cons 3 a))(define c (cons b 4))(define d (cons b c)) (define a (cons 1 2))(define b (cons 3 a))(define c (cons b 4))(define d (cons b c))
      */
     @Override
     public String eval(String... validatedParams) {
-        String car = validatedParams[0];
-        String cdr = validatedParams[1];
+        var car = validatedParams[0];
+        var cdr = validatedParams[1];
         String finalCons = "";
 
         if (car.startsWith("(")) {
@@ -59,4 +60,3 @@ public class Construct implements Symbol {
         return uuid;
     }
 }
-//(define a (cons 1 2))(define b (cons 3 a))(define c (cons b 4))(define d (cons b c))

@@ -27,8 +27,8 @@ public class Main {
             System.out.print("> ");
             input = console.nextLine().trim();
 
-            if (!isBracingValid(input)) {
-                System.out.println("Syntax error number of closing braces do not match number of opening braces.");
+            if (!isParValid(input)) {
+                System.out.println("Syntax error number of closing parentheses do not match number of opening parentheses.");
                 continue;
             }
 
@@ -37,7 +37,7 @@ public class Main {
         } while (!input.equals("exit"));
     }
 
-    public static boolean isBracingValid(String s) {
+    public static boolean isParValid(String s) {
         int sum = 0;
 
         for (char c : s.toCharArray()) {
@@ -58,7 +58,7 @@ public class Main {
                 break;
             }
 
-            final String schemeFunction = findSchemeFunction(s);
+            final String schemeFunction = findFirstParenthesesBlock(s);
 
             SchemeFunction function = stringToSchemeFunction(schemeFunction);
             String value = parseSchemeFunction(function);
@@ -80,8 +80,8 @@ public class Main {
      * @param
      * @return
      */
-    private static String findSchemeFunction(String s) {
-        int openBraceIndex = -1;
+    public static String findFirstParenthesesBlock(String s) {
+        int openParIndex = -1;
 
         for (int i = 0; i < s.length(); i++) {
             final char c = s.charAt(i);
@@ -89,10 +89,10 @@ public class Main {
                 if (isNullDescriptor(s, i)) {
                     i++;
                 } else {
-                    openBraceIndex = i;
+                    openParIndex = i;
                 }
-            } else if (c == ')' && openBraceIndex >= 0) {
-                return s.substring(openBraceIndex, i + 1);
+            } else if (c == ')' && openParIndex >= 0) {
+                return s.substring(openParIndex, i + 1);
             }
         }
 
