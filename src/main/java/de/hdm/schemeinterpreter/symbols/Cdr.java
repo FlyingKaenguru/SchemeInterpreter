@@ -1,6 +1,5 @@
 package de.hdm.schemeinterpreter.symbols;
 
-import de.hdm.schemeinterpreter.Main;
 import de.hdm.schemeinterpreter.ValidationResult;
 import de.hdm.schemeinterpreter.Validator;
 import de.hdm.schemeinterpreter.Validator.Type;
@@ -8,10 +7,10 @@ import de.hdm.schemeinterpreter.utils.ParamUtils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Car implements Symbol {
+public class Cdr implements Symbol {
     @Override
     public String getSymbol() {
-        return "car";
+        return "cdr";
     }
 
     public String getParamDefinition() {
@@ -29,16 +28,11 @@ public class Car implements Symbol {
 
     @Override
     public String eval(String... validatedParams) {
-        final String param = validatedParams[0];
-        final long parCount = param.chars().filter(e -> e == '(').count();
-        final String rawCar = Main.findFirstParenthesesBlock(validatedParams[0]);
+        final Matcher m = Pattern.compile(Validator.enclosed(".*(" + Type.any + " \\. " + Type.any + ")\\)")).matcher(validatedParams[0]);
 
-        if (parCount > 1) {
-            return rawCar;
-        }
-
-        final Matcher m = Pattern.compile("\\((" + Type.any + ") .*\\)").matcher(rawCar);
         m.find();
-        return m.group(1);
+
+        return m.group(1).replace(") . ", "");
     }
+
 }
