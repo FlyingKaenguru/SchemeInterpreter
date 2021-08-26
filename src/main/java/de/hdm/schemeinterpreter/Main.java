@@ -27,17 +27,21 @@ public class Main {
             System.out.print("> ");
             input = console.nextLine().trim();
 
-            if (!isParValid(input)) {
+            if (!isParenthesesValid(input)) {
                 System.out.println("Syntax error number of closing parentheses do not match number of opening parentheses.");
                 continue;
             }
 
             //Input --> Result
-            System.out.println(parseInputString(input));
-        } while (!input.equals("exit"));
+            final String result = parseInputString(input);
+
+            if (result.length() > 0) {
+                System.out.println(result);
+            }
+        } while (!input.equals("(exit)"));
     }
 
-    public static boolean isParValid(String s) {
+    public static boolean isParenthesesValid(String s) {
         int sum = 0;
 
         for (char c : s.toCharArray()) {
@@ -53,11 +57,7 @@ public class Main {
 
     public static String parseInputString(String s) {
         do {
-//            System.out.println("GOING TO PARSE: " + s);
-            if (!Validator.containsSchemeFunction(s)) {
-                break;
-            }
-
+            // System.out.println("GOING TO PARSE: " + s);
             final String schemeFunction = findFirstParenthesesBlock(s);
 
             SchemeFunction function = stringToSchemeFunction(schemeFunction);
@@ -68,7 +68,7 @@ public class Main {
             } else {
                 s = s.replace(function.original, value);
             }
-        } while (Validator.isSchemeFunction(s));
+        } while (Validator.containsSchemeFunction(s));
 
         return s;
     }
@@ -123,9 +123,13 @@ public class Main {
     private static SchemeFunction stringToSchemeFunction(String s) {
         final String[] groups = extractSchemeFunctionParts(s);
 
-        //(+ 7 8) --> [(+ 7 8), + , 7 8]
+        //(+ 7 8) --> ["(+ 7 8)", "+", "7 8"]
         if (groups.length == 3 && Validator.isSchemeFunction(s)) {
-            final String[] params = extractParams(groups[2].trim());
+            String[] params = new String[]{};
+
+            if (null != groups[2]) {
+                params = extractParams(groups[2].trim());
+            }
 
             return new SchemeFunction(groups[0], groups[1], params);
         }

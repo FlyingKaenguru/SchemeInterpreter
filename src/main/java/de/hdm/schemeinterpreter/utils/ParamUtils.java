@@ -3,7 +3,6 @@ package de.hdm.schemeinterpreter.utils;
 import de.hdm.schemeinterpreter.SymbolManager;
 import de.hdm.schemeinterpreter.ValidationResult;
 import de.hdm.schemeinterpreter.Validator;
-
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,7 +24,7 @@ public class ParamUtils {
     public static ValidationResult<String[]> validateParams(String pattern, String[] params) {
         final String paramString = prepareForValidityCheck(params);
         ValidationResult.Status status =
-                null == pattern && null == params || Pattern.compile(pattern).matcher(paramString).matches()
+                null == pattern && params.length <= 0 || null != pattern && Pattern.compile(pattern).matcher(paramString).matches()
                         ? ValidationResult.Status.VALID
                         : ValidationResult.Status.INVALID;
 
