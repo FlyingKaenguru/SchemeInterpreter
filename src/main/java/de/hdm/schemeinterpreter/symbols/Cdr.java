@@ -28,11 +28,20 @@ public class Cdr implements Symbol {
 
     @Override
     public String eval(String... validatedParams) {
-        final Matcher m = Pattern.compile(Validator.enclosed(".*(" + Type.any + " \\. " + Type.any + ")\\)")).matcher(validatedParams[0]);
+        final String param = validatedParams[0];
+        final Matcher m = Pattern.compile("(\\(?" + Type.any + " \\. " + Type.any + ")\\)$").matcher(param);
 
         m.find();
+        final String result = m.group(1);
 
-        return m.group(1).replace(") . ", "");
+        if (result.startsWith("(") || result.contains(") . ")) {
+            return result.replaceAll("^" + Type.any + " \\. ", "");
+        }
+
+        if (result.contains(" . ")) {
+            return "(" + result + ")";
+        }
+
+        return result;
     }
-
 }

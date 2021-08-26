@@ -53,7 +53,7 @@ public class Main {
 
     public static String parseInputString(String s) {
         do {
-            System.out.println("GOING TO PARSE: " + s);
+//            System.out.println("GOING TO PARSE: " + s);
             if (!Validator.containsSchemeFunction(s)) {
                 break;
             }
