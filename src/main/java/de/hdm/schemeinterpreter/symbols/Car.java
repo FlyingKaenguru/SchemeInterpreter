@@ -1,8 +1,6 @@
 package de.hdm.schemeinterpreter.symbols;
 
-import de.hdm.schemeinterpreter.Main;
-import de.hdm.schemeinterpreter.ValidationResult;
-import de.hdm.schemeinterpreter.Validator;
+import de.hdm.schemeinterpreter.*;
 import de.hdm.schemeinterpreter.Validator.Type;
 import de.hdm.schemeinterpreter.utils.ParamUtils;
 import java.util.regex.Matcher;
@@ -34,11 +32,19 @@ public class Car implements Symbol {
         final String rawCar = Main.findFirstParenthesesBlock(validatedParams[0]);
 
         if (parCount > 1) {
-            return rawCar;
+            final String uuid = SymbolManager.generateVarId();
+            SymbolManager.getInstance().addSymbol(SymbolFactory.createVariable(uuid, rawCar));
+
+            return uuid;
         }
 
-        final Matcher m = Pattern.compile("\\((" + Type.any + ") .*\\)").matcher(rawCar);
-        m.find();
-        return m.group(1);
+        if (param.contains(".")) {
+            final Matcher m = Pattern.compile("\\((" + Type.any + ") .*\\)").matcher(rawCar);
+            m.find();
+            return m.group(1);
+        } else {
+            return param.substring(1,2);
+        }
     }
 }
+//(display (car (cons (cons 1 2) 4)))
