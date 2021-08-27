@@ -10,13 +10,20 @@ import java.util.stream.IntStream;
 public class Main {
     static SymbolManager symbolManager = SymbolManager.getInstance();
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args){
+        try {
+            collectSymbols();
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        readEvalPrintLoop();
+    }
+
+    public static void collectSymbols() throws RuntimeException {
         symbolManager.addSymbols(Arrays.stream(ClassFinder.getImplementations(Symbol.class, "de.hdm.schemeinterpreter.symbols"))
                 .map(ClassFinder::getClassInstance)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList()));
-
-        readEvalPrintLoop();
     }
 
     public static void readEvalPrintLoop() {
@@ -26,6 +33,11 @@ public class Main {
         do {
             System.out.print("> ");
             input = console.nextLine().trim();
+
+            //'( --> (list
+            input = replaceSchemeShorts(input);
+            // "(h" -> $_*
+            input = replaceStrings(input);
 
             if (!isParenthesesValid(input)) {
                 System.out.println("Syntax error number of closing parentheses do not match number of opening parentheses.");
@@ -39,6 +51,24 @@ public class Main {
                 System.out.println(result);
             }
         } while (!input.equals("(exit)"));
+    }
+
+    private static String replaceStrings(String s){
+        final Matcher m = Pattern.compile(Validator.Type.string).matcher(s);
+        final List<String> matches = new ArrayList<>();
+
+        while (m.find()) {
+            matches.add(m.group());
+        }
+
+        StringBuilder result = new StringBuilder();
+        for (String match: matches.toArray(String[]::new)) {
+            final String uuid = SymbolManager.generateVarId();
+            SymbolManager.getInstance().addSymbol(SymbolFactory.createVariable(uuid, match));
+
+            result.append(s.replace(match, uuid));
+        }
+        return result.toString();
     }
 
     public static boolean isParenthesesValid(String s) {
@@ -70,7 +100,7 @@ public class Main {
             }
         } while (Validator.containsSchemeFunction(s));
 
-        return s;
+        return s.stripTrailing();
     }
 
     /**
@@ -180,5 +210,10 @@ public class Main {
         }
 
         return symbol.eval(validationResult.validationSubject);
+    }
+
+    private static String replaceSchemeShorts(String s) {
+//        return s.replaceAll(Type.schemeListShort, "(list $1)");
+        return s.replace("'(", "(list ");
     }
 }
