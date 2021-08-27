@@ -53,24 +53,6 @@ public class Main {
         } while (!input.equals("(exit)"));
     }
 
-    private static String replaceStrings(String s){
-        final Matcher m = Pattern.compile(Validator.Type.string).matcher(s);
-        final List<String> matches = new ArrayList<>();
-
-        while (m.find()) {
-            matches.add(m.group());
-        }
-
-        StringBuilder result = new StringBuilder();
-        for (String match: matches.toArray(String[]::new)) {
-            final String uuid = SymbolManager.generateVarId();
-            SymbolManager.getInstance().addSymbol(SymbolFactory.createVariable(uuid, match));
-
-            result.append(s.replace(match, uuid));
-        }
-        return result.toString();
-    }
-
     public static boolean isParenthesesValid(String s) {
         int sum = 0;
 
@@ -215,5 +197,26 @@ public class Main {
     private static String replaceSchemeShorts(String s) {
 //        return s.replaceAll(Type.schemeListShort, "(list $1)");
         return s.replace("'(", "(list ");
+    }
+
+    private static String replaceStrings(String s){
+        final Matcher m = Pattern.compile(Validator.Type.string).matcher(s);
+        final List<String> matches = new ArrayList<>();
+
+        while (m.find()) {
+            matches.add(m.group());
+        }
+
+        StringBuilder result = new StringBuilder();
+        if(matches.size() >=1){
+            for (String match: matches) {
+                final String uuid = SymbolManager.generateVarId();
+                SymbolManager.getInstance().addSymbol(SymbolFactory.createVariable(uuid, match));
+
+                result.append(s.replace(match, uuid));
+            }
+            return result.toString();
+        }
+        return s;
     }
 }

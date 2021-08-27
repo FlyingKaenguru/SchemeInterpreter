@@ -33,7 +33,7 @@ class CarTest {
 
     @Test
     void nestedList() {
-        var nestedList = "(define listCar_b (list '(1 2) '(3 4)))";
+        var nestedList = "(define listCar_b (list (list 1 2) (list 3 4)))";
         Main.parseInputString(nestedList);
         assertEquals("(1 2)", Main.parseInputString("(display (car listCar_b))"));
     }

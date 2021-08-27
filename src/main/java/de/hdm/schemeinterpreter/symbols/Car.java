@@ -47,4 +47,3 @@ public class Car implements Symbol {
         }
     }
 }
-//(display (car (cons (cons 1 2) 4)))
