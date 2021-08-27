@@ -1,28 +1,24 @@
 package de.hdm.schemeinterpreter.symbols;
 
+import de.hdm.schemeinterpreter.Main;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ConstructTest {
 
-
+    @BeforeAll
+    static void setup() {
+        Util.addSymbols(
+                new Construct(),
+                new Display(),
+                new Define());
+    }
 
     @Test
-    void eval() {
-
-
-        /*
-        (define c1 (cons 1 (cons 2 (cons 3 (cons 4 5)))))
-(define l1 (list 1 2 3))
-(display c1)
-(newline)
-(define c2 (cons 1 2))
-(display c2)
-(set-cdr! c2 '(y x))
-(newline)
-(display c2)
-
-         */
+    void multiCons() {
+        var multicons = "(define construct_a (cons 1 2))(define construct_b (cons 3 construct_a))(define construct_c (cons construct_b 4))(define construct_d (cons construct_b construct_c))))";
+        Main.parseInputString(multicons);
+        assertEquals("((3 1 . 2) (3 1 . 2) . 4)", Main.parseInputString("(display construct_d)"));
     }
 }

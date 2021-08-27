@@ -11,6 +11,6 @@ class AdditionTest {
     @Test
     void eval() {
         assertEquals("16.0", addition.eval("4", "5", "7"));
-        assertEquals("14,34", addition.eval("5.34", "9"));
+        assertEquals("14.34", addition.eval("5.34", "9"));
     }
 }

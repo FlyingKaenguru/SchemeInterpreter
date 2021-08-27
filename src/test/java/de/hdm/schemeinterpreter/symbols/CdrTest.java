@@ -1,10 +1,16 @@
 package de.hdm.schemeinterpreter.symbols;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CdrTest {
-    private final Symbol cdr = new Cdr();
+    private static final Symbol cdr = new Cdr();
+
+    @BeforeAll
+    static void setup() {
+        Util.addSymbols(cdr);
+    }
 
     @Test
     void eval() {

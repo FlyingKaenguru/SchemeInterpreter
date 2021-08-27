@@ -1,13 +1,19 @@
 package de.hdm.schemeinterpreter.symbols;
 
 import de.hdm.schemeinterpreter.ValidationResult;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class IfStatementTest {
 
-    private final IfStatement ifStatement = new IfStatement();
+    private static final IfStatement ifStatement = new IfStatement();
+
+    @BeforeAll
+    static void setup() {
+        Util.addSymbols(ifStatement);
+    }
 
     @Test
     void eval() {

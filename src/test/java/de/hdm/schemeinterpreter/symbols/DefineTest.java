@@ -14,20 +14,21 @@ class DefineTest {
 
     @BeforeAll
     static void define(){
-        define.eval("test", "4");
+        Util.addSymbols(define);
+        define.eval("defineTest", "4");
     }
 
     @Test
     @Order(1)
     void symbolAdded() {
-        Optional<Symbol> symbol = SymbolManager.getInstance().getSymbol("test");
+        Optional<Symbol> symbol = SymbolManager.getInstance().getSymbol("defineTest");
         assertTrue(symbol.isPresent());
     }
 
     @Test
     @Order(2)
     void valueCheck(){
-        Optional<Symbol> symbol = SymbolManager.getInstance().getSymbol("test");
+        Optional<Symbol> symbol = SymbolManager.getInstance().getSymbol("defineTest");
         assertTrue(symbol.get().eval().equals("4"));
     }
 }
