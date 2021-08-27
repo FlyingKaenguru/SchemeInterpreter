@@ -195,7 +195,6 @@ public class Main {
     }
 
     private static String replaceSchemeShorts(String s) {
-//        return s.replaceAll(Type.schemeListShort, "(list $1)");
         return s.replace("'(", "(list ");
     }
 

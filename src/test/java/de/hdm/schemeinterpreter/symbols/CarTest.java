@@ -18,14 +18,41 @@ class CarTest {
     }
 
     @Test
-    void multiCons() {
+    void singleConstructNumber() {
+        assertEquals("1", Main.parseInputString("(display (car (cons 1 2)))"));
+    }
+
+    @Test
+    void singleConstructString() {
+        assertEquals("\"Hello\"", Main.parseInputString("(display (car (cons '\"Hello\"' '\"World\"')))"));
+    }
+
+    @Test
+    void singleListString() {
+        assertEquals("\"Hello\"", Main.parseInputString("(display (car (list '\"Hello\"' '\"World\"')))"));
+    }
+
+    @Test
+    void ConstructInConstruct() {
+        assertEquals("(1 . 2)", Main.parseInputString("(display (car (cons (cons 1 2) 3)))"));
+    }
+
+    @Test
+    void doubleConstructInConstruct() {
+        //((1 . 2) 3 . 4)
+        assertEquals("(1 . 2)", Main.parseInputString("(display (car (cons (cons 1 2) (cons 3 4))))"));
+    }
+
+    @Test
+    void multiConstruct() {
+        //((3 1 . 2) (3 1 . 2) . 4)
         var multicons = "(define conCar_a (cons 1 2))(define conCar_b (cons 3 conCar_a))(define conCar_c (cons conCar_b 4))(define conCar_d (cons conCar_b conCar_c))";
         Main.parseInputString(multicons);
         assertEquals("(3 1 . 2)", Main.parseInputString("(display (car conCar_d)) "));
     }
 
     @Test
-    void singelList() {
+    void singleList() {
         var list = "(define listCar_a (list 1 2 3))";
         Main.parseInputString(list);
         assertEquals("1", Main.parseInputString("(display (car listCar_a))"));
@@ -33,8 +60,8 @@ class CarTest {
 
     @Test
     void nestedList() {
-        var nestedList = "(define listCar_b (list (list 1 2) (list 3 4)))";
+        var nestedList = "(define listNested (list (list 1 2) (list 3 4)))";
         Main.parseInputString(nestedList);
-        assertEquals("(1 2)", Main.parseInputString("(display (car listCar_b))"));
+        assertEquals("(1 2)", Main.parseInputString("(display (car listNested))"));
     }
 }
