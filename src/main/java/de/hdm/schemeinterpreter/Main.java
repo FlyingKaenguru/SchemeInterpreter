@@ -206,15 +206,15 @@ public class Main {
             matches.add(m.group());
         }
 
-        StringBuilder result = new StringBuilder();
+        String result = s;
         if(matches.size() >=1){
             for (String match: matches) {
                 final String uuid = SymbolManager.generateVarId();
                 SymbolManager.getInstance().addSymbol(SymbolFactory.createVariable(uuid, match));
 
-                result.append(s.replace(match, uuid));
+                result = (s.replace(match, uuid));
             }
-            return result.toString();
+            return result;
         }
         return s;
     }

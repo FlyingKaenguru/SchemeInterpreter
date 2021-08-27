@@ -30,7 +30,12 @@ class CdrTest {
 
     @Test
     void singleListString() {
-        assertEquals("\"World\"", Main.parseInputString("(display (cdr (list '\"Hello\"' '\"World\"')))"));
+        assertEquals("\"World\"", Main.parseInputString("(display (cdr (list \"\\\"Hello\\\"\" \"\\\"World\\\"\")))"));
+    }
+
+    @Test
+    void singleListWithMultiString() {
+        assertEquals("(\"Hello2\" \"World\")", Main.parseInputString("(display (cdr (list \"Hello\" \"Hello2\" \"World\")))"));
     }
 
 
@@ -49,6 +54,7 @@ class CdrTest {
         @Test
     void multiConstruct() {
         //((3 1 . 2) (3 1 . 2) . 4)
+        //((3 1 . 2) (3 1 . 2) . 4)
         var multicons = "(define conCdr_a (cons 1 2))(define conCdr_b (cons 3 conCdr_a))(define conCdr_c (cons conCdr_b 4))(define conCdr_d (cons conCdr_b conCdr_c))";
         Main.parseInputString(multicons);
         assertEquals("((3 1 . 2) . 4)", Main.parseInputString("(display (cdr conCdr_d)) "));
@@ -58,8 +64,6 @@ class CdrTest {
     void singleList() {
         var list = "(define listCdr_a (list 1 2 3))";
         Main.parseInputString(list);
-        Cdr cdr = new Cdr();
-        assertEquals("(2 3)", cdr.eval("(1 2 3)"));
         assertEquals("(2 3)", Main.parseInputString("(display (cdr listCdr_a))"));
     }
 
@@ -68,5 +72,12 @@ class CdrTest {
         var nestedList = "(define listCdr_b (list (list 1 2) (list 3 4)))";
         Main.parseInputString(nestedList);
         assertEquals("((3 4))", Main.parseInputString("(display (cdr listCdr_b))"));
+    }
+
+    @Test
+    void middleList() {
+        var nestedList = "(define listCdr_c (list  1 (list 2 3) 4))";
+        Main.parseInputString(nestedList);
+        assertEquals("((2 3) 4)", Main.parseInputString("(display (cdr listCdr_c))"));
     }
 }

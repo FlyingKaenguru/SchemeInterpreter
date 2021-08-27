@@ -36,14 +36,11 @@ public class Car implements Symbol {
             SymbolManager.getInstance().addSymbol(SymbolFactory.createVariable(uuid, rawCar));
 
             return uuid;
-        }else {
-            if (param.contains(".")) {
-                final Matcher m = Pattern.compile("\\((" + Type.any + ") .*\\)").matcher(rawCar);
-                m.find();
-                return m.group(1);
-            } else {
-                return param.substring(1,2);
-            }
+        } else {
+            final Matcher m = Pattern.compile("\\((" + Type.any + ") .*\\)").matcher(rawCar);
+            m.find();
+            return m.group(1);
+
         }
     }
 }
