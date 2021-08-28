@@ -1,5 +1,6 @@
 package de.hdm.schemeinterpreter;
 
+import de.hdm.schemeinterpreter.Validator.Type;
 import de.hdm.schemeinterpreter.symbols.Symbol;
 
 public class SymbolFactory {
@@ -32,7 +33,7 @@ public class SymbolFactory {
         };
     }
 
-    public static Symbol createConstructReference(String symbol, String[] value){
+    public static Symbol createLambdaVariable(String symbol, String[] args, String body){
         return new Symbol() {
             @Override
             public String getSymbol() {
@@ -41,13 +42,19 @@ public class SymbolFactory {
 
             @Override
             public String getParamDefinition() {
-                return null;
+                return Validator.enclosed("(?:" + Type.any + " ){" + args.length + "}");
             }
 
             @Override
             public String eval(String... validatedParams) {
-                return "(" + String.join(" . ", value) + ")";
+                String result = body;
+                for (int i = 0; i < args.length; i++) {
+                    result = result.replace(args[i], validatedParams[i]);
+                }
+
+                return result;
             }
         };
     }
+
 }

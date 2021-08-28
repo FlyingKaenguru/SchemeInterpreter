@@ -1,5 +1,6 @@
 package de.hdm.schemeinterpreter;
 
+import de.hdm.schemeinterpreter.exception.IllegalParameterException;
 import de.hdm.schemeinterpreter.symbols.Symbol;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -10,7 +11,7 @@ import java.util.stream.IntStream;
 public class Main {
     static SymbolManager symbolManager = SymbolManager.getInstance();
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         try {
             collectSymbols();
         } catch (RuntimeException e) {
@@ -34,10 +35,15 @@ public class Main {
             System.out.print("> ");
             input = console.nextLine().trim();
 
+            if (input.equals("(exit)")) {
+                break;
+            }
+
             //'( --> (list
             input = replaceSchemeShorts(input);
             // "(h" -> $_*
             input = replaceStrings(input);
+            input = input.replaceAll("\s{2,}", " ");
 
             if (!isParenthesesValid(input)) {
                 System.out.println("Syntax error number of closing parentheses do not match number of opening parentheses.");
@@ -69,20 +75,47 @@ public class Main {
 
     public static String parseInputString(String s) {
         do {
-            // System.out.println("GOING TO PARSE: " + s);
-            final String schemeFunction = findFirstParenthesesBlock(s);
+            SchemeFunction function;
 
-            SchemeFunction function = stringToSchemeFunction(schemeFunction);
-            String value = parseSchemeFunction(function);
-
-            if (null == value) {
-                return "NOT VALID";
+            if (s.contains("lambda")) {
+                function = stringToLambdaFunction(findLambdaFunctionBlock(s));
             } else {
-                s = s.replace(function.original, value);
+                function = stringToSchemeFunction(findFirstParenthesesBlock(s));
             }
+
+            var resultInnerString = "";
+            try {
+                resultInnerString = parseSchemeFunction(function);
+            } catch (IllegalParameterException e) {
+                System.out.println(e.getMessage());
+                return "";
+            }
+
+            s = s.replace(function.original, resultInnerString);
         } while (Validator.containsSchemeFunction(s));
 
         return s.stripTrailing();
+    }
+
+    public static String findLambdaFunctionBlock(String s) {
+        final int lambdaIndex = (s.contains("(lambda")) ? s.indexOf("(lambda") : s.indexOf("( lambda");
+        int pars = 0;
+
+        for (int i = lambdaIndex; i < s.length(); i++) {
+            final char c = s.charAt(i);
+
+            if (c == '(') {
+                pars++;
+            } else if (c == ')') {
+                pars--;
+            }
+
+            if (pars == 0) {
+                return s.substring(lambdaIndex, i + 1);
+            }
+        }
+
+        return "";
     }
 
     /**
@@ -149,6 +182,20 @@ public class Main {
         return null;
     }
 
+    private static SchemeFunction stringToLambdaFunction(String s) {
+        final String[] groups = extractSchemeFunctionParts(s);
+
+        if (groups.length == 3 && Validator.isSchemeFunction(s)) {
+            final Matcher m = Pattern.compile("\\(([^()]+)\\) (\\(?.+\\)?)").matcher(groups[2].trim());
+
+            if (m.find()) {
+                return new SchemeFunction(groups[0], groups[1], new String[]{m.group(1), m.group(2)});
+            }
+        }
+
+        return null;
+    }
+
     /**
      * Returns groups
      * eg. groups (+ 7 8) --> [(+ 7 8), + , 7 8]
@@ -184,11 +231,11 @@ public class Main {
         return matches.toArray(String[]::new);
     }
 
-    private static String executeSchemeFunction(Symbol symbol, String[] params) {
+    private static String executeSchemeFunction(Symbol symbol, String[] params) throws IllegalParameterException {
         final ValidationResult<String[]> validationResult = symbol.validateParams(params);
 
         if (validationResult.status == ValidationResult.Status.INVALID) {
-            throw new IllegalArgumentException(validationResult.message);
+            throw new IllegalParameterException();
         }
 
         return symbol.eval(validationResult.validationSubject);
@@ -198,7 +245,7 @@ public class Main {
         return s.replace("'(", "(list ");
     }
 
-    private static String replaceStrings(String s){
+    private static String replaceStrings(String s) {
         final Matcher m = Pattern.compile(Validator.Type.string).matcher(s);
         final List<String> matches = new ArrayList<>();
 
@@ -207,8 +254,8 @@ public class Main {
         }
 
         String result = s;
-        if(matches.size() >=1){
-            for (String match: matches) {
+        if (matches.size() >= 1) {
+            for (String match : matches) {
                 final String uuid = SymbolManager.generateVarId();
                 SymbolManager.getInstance().addSymbol(SymbolFactory.createVariable(uuid, match));
 
