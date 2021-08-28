@@ -1,12 +1,21 @@
 package de.hdm.schemeinterpreter.symbols;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 class AdditionTest {
 
     private final Addition addition = new Addition();
+
+    @BeforeAll
+    static void setup() {
+        Util.addSymbols(
+                new Addition(),
+                new Display(),
+                new Define());
+    }
 
     @Test
     void eval() {
