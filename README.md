@@ -19,11 +19,11 @@ java -jar schemeInterpreter-1.0.jar
 
 ### A function consists of:  
 `(symbol [] [] )`
-Functions can have inner-functions: (symbol `(symbol [] []) [])`
+Functions can have inner-functions: `(symbol [] (symbol [] []))`
 
 ### Follow-up characters (Symbol) with example
 - Addition
-  - `(+ 5 6)`
+  - `(+ 5 6 ...)`
 - car - first item of cons or list
   - `(car x)` 
 - cdr - second and all subsequent items in list / cons
@@ -33,9 +33,9 @@ Functions can have inner-functions: (symbol `(symbol [] []) [])`
 - Define
   - `(define xy 5)`
 - Display variable 
-  - `(display xy)`
+  - `(display xy ...)`
 - Division 
-  - `(/ 3 9)`
+  - `(/ 3 9 ...)`
 - Greater
   - `(> 5 7)`
 - GreaterEquals
@@ -43,15 +43,15 @@ Functions can have inner-functions: (symbol `(symbol [] []) [])`
 - IfStatement
   - `(if (= 4 6) #t #f)`
 - lambda expression -> A lambda expression creates a function. In the simplest case, a lambda expression has the form
-  - `((lambda (x y) (+ x y)) 2 3)`
+  - `((lambda (x y ...) (+ x y ...)) 2 3 ...)`
 - List
-  - `(list 4 5 6)` 
+  - `(list 4 5 6 ...)` 
 - Lower
   - `(< 4 5)`
 - LowerEquals
   - `(<= 3 4)`
 - Multiplication
-  - `(* 2 4)`
+  - `(* 2 4 ...)`
 - newline - Prints a new line
   - `(newline)`
 - Numeric equal
@@ -63,7 +63,7 @@ Functions can have inner-functions: (symbol `(symbol [] []) [])`
 - String Equal
   - `(equal? "Hello" "World")`
 - Subtraction
-  - `(- 6 7)`
+  - `(- 6 7 ...)`
 
 ## Issues and Todos
 - Automatic loading of symbol classes after compilation is not possible. 
