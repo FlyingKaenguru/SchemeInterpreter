@@ -66,11 +66,11 @@ Functions can have inner-functions: (symbol `(symbol [] []) [])`
   - `(- 6 7)`
 
 ## Issues and Todos
-- Automatic loading of the symbol classes after compilation is not possible. 
-  The classpath is not recognised here
+- Automatic loading of symbol classes after compilation is not possible. 
+  The classpath is not recognised here (in a compiled environment)
   
-- All strings, cons and lists are stored permanently, like defined variables. This causes the application to slow down over time. 
+- All strings, cons and lists are stored permanently (runtime, until java program is stopped), like defined variables. This could causes the application slow down over time. 
   Here, a solution must be thought of how values that are only needed for processing can be deleted afterwards.
 
-- Comparing strings is very slow compared to comparing bytes. Perhaps the application should be modified. 
+- Comparing strings is very slow compared to comparing bits/bytes. Perhaps the application could be modified. 
   Since the speed of the application was not a criterion when creating it, this was neglected in version 1.0.
