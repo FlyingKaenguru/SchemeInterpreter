@@ -4,12 +4,13 @@ import de.hdm.schemeinterpreter.exception.IllegalParameterException;
 import de.hdm.schemeinterpreter.exception.NoValidFunctionException;
 import de.hdm.schemeinterpreter.exception.NotImplementedException;
 import de.hdm.schemeinterpreter.exception.SyntaxErrorException;
-import de.hdm.schemeinterpreter.symbols.Symbol;
+import de.hdm.schemeinterpreter.symbols.*;
+import de.hdm.schemeinterpreter.symbols.Set;
 
+import java.util.List;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Main {
@@ -26,12 +27,46 @@ public class Main {
 
     /**
      * Automatic loading of all symbol instances
+     * NOT WORKING AFTER COMPILING ... ONLY IN IDE - TODO
      */
     public static void collectSymbols() {
-        symbolManager.addSymbols(Arrays.stream(ClassFinder.getImplementations(Symbol.class, "de.hdm.schemeinterpreter.symbols"))
+        List<Symbol> symbols = Arrays.asList(
+                new Addition(),
+                new Car(),
+                new Cdr(),
+                new Construct(),
+                new Define(),
+                new Display(),
+                new Division(),
+                new Greater(),
+                new GreaterEquals(),
+                new IfStatement(),
+                new Lambda(),
+                new de.hdm.schemeinterpreter.symbols.List(),
+                new Lower(),
+                new LowerEquals(),
+                new Multiplication(),
+                new NumericEqual(),
+                new NumericNotEqual(),
+                new Set(),
+                new StringEqual(),
+                new Subtraction()
+                );
+        symbolManager.addSymbols(symbols);
+
+/*
+        final List<Symbol> symbols = Arrays.stream(ClassFinder.getImplementations(Symbol.class, "de.hdm.schemeinterpreter.symbols"))
                 .map(ClassFinder::getClassInstance)
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
+        symbolManager.addSymbols(symbols);
+
+        System.out.println(symbols.size());
+
+        for (Symbol symbol : symbols) {
+            System.out.println(symbol.getClass().getName());
+        }
+*/
     }
 
     public static void readEvalPrintLoop() {
@@ -64,7 +99,7 @@ public class Main {
                     }
 
                 }
-            } catch (SyntaxErrorException|NoValidFunctionException|NotImplementedException e){
+            } catch (SyntaxErrorException | NoValidFunctionException | NotImplementedException e) {
                 System.out.println(e.getMessage());
             }
 
@@ -164,12 +199,12 @@ public class Main {
     /**
      * Checks if symbol is implements, calls executionSchemeFunction
      */
-    private static String parseSchemeFunction(SchemeFunction function) throws NotImplementedException{
+    private static String parseSchemeFunction(SchemeFunction function) throws NotImplementedException {
         Optional<Symbol> symbol = symbolManager.getSymbol(function.symbol);
         if (symbol.isPresent()) {
             return executeSchemeFunction(symbol.get(), function.params);
         } else {
-           throw new NotImplementedException("'"+ function.symbol + "' not implemented");
+            throw new NotImplementedException("'" + function.symbol + "' not implemented");
         }
     }
 

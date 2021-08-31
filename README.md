@@ -1,5 +1,14 @@
 # Scheme Interpreter
 
+### Launch application
+java -jar target/schemeInterpreter-1.0.jar
+
+### Exit application
+- (exit)
+
+### Requirement
+- java 1.16
+
 ## Syntax:
 
 ### initial character:
@@ -56,6 +65,12 @@ Functions can have inner-functions: (symbol `(symbol [] []) [])`
 - Subtraction
   - `(- 6 7)`
 
+## Issues and Todos
+- Automatic loading of the symbol classes after compilation is not possible. 
+  The classpath is not recognised here
+  
+- All strings, cons and lists are stored permanently, like defined variables. This causes the application to slow down over time. 
+  Here, a solution must be thought of how values that are only needed for processing can be deleted afterwards.
 
-
-
+- Comparing strings is very slow compared to comparing bytes. Perhaps the application should be modified. 
+  Since the speed of the application was not a criterion when creating it, this was neglected in version 1.0.

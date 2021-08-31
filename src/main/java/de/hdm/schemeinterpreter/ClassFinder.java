@@ -16,6 +16,8 @@ public class ClassFinder {
         final String directory = Thread.currentThread().getContextClassLoader().getResource(packageName.replace('.', '/')).getFile();
         final File packageDirectory = new File(directory);
 
+        System.out.println(directory);
+        System.out.println(packageDirectory);
         if (packageDirectory.exists()) {
             return Arrays.stream(Objects.requireNonNull(packageDirectory.list()))
                     .filter(e -> e.endsWith(".class") && !e.contains("$"))
