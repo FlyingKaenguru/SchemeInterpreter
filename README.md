@@ -1,7 +1,7 @@
 # Scheme Interpreter
 
 ### Launch application
-java -jar target/schemeInterpreter-1.0.jar
+java -jar schemeInterpreter-1.0.jar
 
 ### Exit application
 - (exit)
