@@ -42,7 +42,7 @@ Functions can have inner-functions: (symbol `(symbol [] []) [])`
 - LowerEquals
   - `(<= 3 4)`
 - Multiplication
-  - `(\* 2 4)`
+  - `(* 2 4)`
 - newline - Prints a new line
   - `(newline)`
 - Numeric equal
