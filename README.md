@@ -34,7 +34,7 @@ Functions can have inner-functions: (symbol `(symbol [] []) [])`
 - IfStatement
   - `(if (= 4 6) #t #f)`
 - lambda expression -> A lambda expression creates a function. In the simplest case, a lambda expression has the form
-  - `((lambda (x y) (\+ x y)) 2 3)`
+  - `((lambda (x y) (+ x y)) 2 3)`
 - List
   - `(list 4 5 6)` 
 - Lower
@@ -42,7 +42,7 @@ Functions can have inner-functions: (symbol `(symbol [] []) [])`
 - LowerEquals
   - `(<= 3 4)`
 - Multiplication
-  - `(\* 2 4)`
+  - `(* 2 4)`
 - newline - Prints a new line
   - `(newline)`
 - Numeric equal
