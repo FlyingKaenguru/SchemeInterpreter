@@ -20,7 +20,7 @@ public class Multiplication implements Symbol {
         double[] numbers = Arrays.stream(validatedParams).mapToDouble(Double::valueOf).toArray();
         double result = numbers[0];
         for (int i = 1; i < numbers.length; i++) {
-            result -= numbers[i];
+            result *= numbers[i];
         }
         return String.valueOf(result);
     }

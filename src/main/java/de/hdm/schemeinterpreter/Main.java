@@ -1,7 +1,11 @@
 package de.hdm.schemeinterpreter;
 
 import de.hdm.schemeinterpreter.exception.IllegalParameterException;
+import de.hdm.schemeinterpreter.exception.NoValidFunctionException;
+import de.hdm.schemeinterpreter.exception.NotImplementedException;
+import de.hdm.schemeinterpreter.exception.SyntaxErrorException;
 import de.hdm.schemeinterpreter.symbols.Symbol;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,7 +24,10 @@ public class Main {
         readEvalPrintLoop();
     }
 
-    public static void collectSymbols() throws RuntimeException {
+    /**
+     * Automatic loading of all symbol instances
+     */
+    public static void collectSymbols() {
         symbolManager.addSymbols(Arrays.stream(ClassFinder.getImplementations(Symbol.class, "de.hdm.schemeinterpreter.symbols"))
                 .map(ClassFinder::getClassInstance)
                 .filter(Objects::nonNull)
@@ -35,27 +42,32 @@ public class Main {
             System.out.print("> ");
             input = console.nextLine().trim();
 
-            if (input.equals("(exit)")) {
-                break;
+            try {
+                if (input.equals("(exit)")) {
+                    break;
+                } else if (!input.startsWith("(")) {
+                    throw new SyntaxErrorException("Syntax error Input does not have opening parenthesis");
+                } else if (!isParenthesesValid(input)) {
+                    throw new SyntaxErrorException("Syntax error number of closing parentheses do not match number of opening parentheses.");
+                } else {
+                    //'( --> (list
+                    input = replaceSchemeShorts(input);
+                    // "(h" -> $_*
+                    input = replaceStrings(input);
+                    // remove whitespaces
+                    input = input.replaceAll("\s{2,}", " ");
+
+                    //Input --> Result
+                    final String result = parseInputString(input);
+                    if (result.length() > 0) {
+                        System.out.println(result);
+                    }
+
+                }
+            } catch (SyntaxErrorException|NoValidFunctionException|NotImplementedException e){
+                System.out.println(e.getMessage());
             }
 
-            //'( --> (list
-            input = replaceSchemeShorts(input);
-            // "(h" -> $_*
-            input = replaceStrings(input);
-            input = input.replaceAll("\s{2,}", " ");
-
-            if (!isParenthesesValid(input)) {
-                System.out.println("Syntax error number of closing parentheses do not match number of opening parentheses.");
-                continue;
-            }
-
-            //Input --> Result
-            final String result = parseInputString(input);
-
-            if (result.length() > 0) {
-                System.out.println(result);
-            }
         } while (!input.equals("(exit)"));
     }
 
@@ -73,7 +85,10 @@ public class Main {
         return sum == 0;
     }
 
-    public static String parseInputString(String s) {
+    /**
+     * Processes all inner functions and replaces the original string with their result until all functions have been resolved.
+     */
+    public static String parseInputString(String s) throws NoValidFunctionException, NotImplementedException {
         do {
             SchemeFunction function;
 
@@ -83,13 +98,11 @@ public class Main {
                 function = stringToSchemeFunction(findFirstParenthesesBlock(s));
             }
 
-            var resultInnerString = "";
-            try {
-                resultInnerString = parseSchemeFunction(function);
-            } catch (IllegalParameterException e) {
-                System.out.println(e.getMessage());
-                return "";
+            if (null == function) {
+                throw new NoValidFunctionException();
             }
+
+            var resultInnerString = parseSchemeFunction(function);
 
             s = s.replace(function.original, resultInnerString);
         } while (Validator.containsSchemeFunction(s));
@@ -97,6 +110,9 @@ public class Main {
         return s.stripTrailing();
     }
 
+    /**
+     * Returns first lambda-block from input string
+     */
     public static String findLambdaFunctionBlock(String s) {
         final int lambdaIndex = (s.contains("(lambda")) ? s.indexOf("(lambda") : s.indexOf("( lambda");
         int pars = 0;
@@ -121,9 +137,6 @@ public class Main {
     /**
      * Search inner function
      * eg (+ (+ 6 7) 9) --> (+ 6 7)
-     *
-     * @param
-     * @return
      */
     public static String findFirstParenthesesBlock(String s) {
         int openParIndex = -1;
@@ -150,21 +163,19 @@ public class Main {
 
     /**
      * Checks if symbol is implements, calls executionSchemeFunction
-     *
-     * @param function SchemeFunction
-     * @return eval result
      */
-    private static String parseSchemeFunction(SchemeFunction function) {
+    private static String parseSchemeFunction(SchemeFunction function) throws NotImplementedException{
         Optional<Symbol> symbol = symbolManager.getSymbol(function.symbol);
         if (symbol.isPresent()) {
             return executeSchemeFunction(symbol.get(), function.params);
         } else {
-            System.out.printf("'%s' not implemented\n", function.symbol);
-            return null;
+           throw new NotImplementedException("'"+ function.symbol + "' not implemented");
         }
     }
 
-
+    /**
+     * Transfers string to lambda function
+     */
     private static SchemeFunction stringToSchemeFunction(String s) {
         final String[] groups = extractSchemeFunctionParts(s);
 
@@ -182,6 +193,9 @@ public class Main {
         return null;
     }
 
+    /**
+     * Transfers lambda-block to lambda function
+     */
     private static SchemeFunction stringToLambdaFunction(String s) {
         final String[] groups = extractSchemeFunctionParts(s);
 
@@ -199,9 +213,6 @@ public class Main {
     /**
      * Returns groups
      * eg. groups (+ 7 8) --> [(+ 7 8), + , 7 8]
-     *
-     * @param s
-     * @return String Array with found match groups
      */
     private static String[] extractSchemeFunctionParts(String s) {
         final Matcher m = Pattern.compile(Validator.Type.function).matcher(s);
@@ -216,9 +227,6 @@ public class Main {
     /**
      * Returns matches and removes all whitespaces outside ""
      * eg. "7 "Hello    World"       9"  -> [7, "Hello    World", 9]
-     *
-     * @param s
-     * @return String Array
      */
     private static String[] extractParams(String s) {
         final Matcher m = Pattern.compile(Validator.Type.string + "|[^\s]+").matcher(s);
@@ -231,6 +239,9 @@ public class Main {
         return matches.toArray(String[]::new);
     }
 
+    /**
+     * If params for Symbol are valid Symbol eval is called
+     */
     private static String executeSchemeFunction(Symbol symbol, String[] params) throws IllegalParameterException {
         final ValidationResult<String[]> validationResult = symbol.validateParams(params);
 
@@ -241,10 +252,16 @@ public class Main {
         return symbol.eval(validationResult.validationSubject);
     }
 
+    /**
+     * '(6 5) --> (list 6 5)
+     */
     private static String replaceSchemeShorts(String s) {
         return s.replace("'(", "(list ");
     }
 
+    /**
+     * Strings saved as Symbole --> UUID (Symbole) returned
+     */
     private static String replaceStrings(String s) {
         final Matcher m = Pattern.compile(Validator.Type.string).matcher(s);
         final List<String> matches = new ArrayList<>();
